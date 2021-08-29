@@ -13,9 +13,7 @@ class MahonyFilter{
 
     public:
         MahonyFilter();
-        State& mahonyFilterLib(ImuData imuData);
-        void printQuaternion(Quaternion quaternion);  
-        void printVector(vect3 vector);
+        State& mahonyFilter(ImuData imuData);
 };
 
 #endif

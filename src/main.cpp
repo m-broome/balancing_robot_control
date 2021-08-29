@@ -20,15 +20,12 @@ PIDController controller;
 ControlOutput controlOutput;
 double dt;
 Timer timer;
-// uint32_t start = 0;
 
 void setup() {
   imu = IMU();
   leftMotor = LeftMotorController();
   rightMotor = RightMotorController();
   reference = State();
-  controlOutput.leftSpeed = 4000;
-  controlOutput.rightSpeed = 4000;
   dt = 0;
   timer.start();
 }

@@ -74,13 +74,13 @@
 //===========================================================================
 
 // Control Loop Timing
-# define LOOP_FREQUENCY 100
+# define LOOP_FREQUENCY 50
 # define WATCHDOG_THRESHOLD 300
 
 // PID Controller
-# define WINDUP_THRESHOLD 100
+# define WINDUP_THRESHOLD 6000
 
-# define PID_K_RY 1
-# define PID_KD_RY 100
+# define PID_K_RY 6000
+# define PID_KD_RY 6
 # define PID_KI_RY 0
 

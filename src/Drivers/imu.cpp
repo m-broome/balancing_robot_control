@@ -28,7 +28,7 @@ ImuData& IMU::readData(){
 }
 
 State& IMU::updateState(){
-    this->state = this->mahonyFilter.mahonyFilterLib(this->imuData); 
+    this->state = this->mahonyFilter.mahonyFilter(this->imuData); 
     return this->state;
 }
 
