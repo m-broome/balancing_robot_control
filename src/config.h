@@ -84,3 +84,11 @@
 # define PID_KD_RY 6
 # define PID_KI_RY 0
 
+
+//===========================================================================
+//============================= Motion Constraints ==========================
+//===========================================================================
+
+// Switch on and switch off
+# define SWITCH_ON_ANGLE_DEGREES 5
+# define SWITCH_OFF_ANGLE_DEGREES 60
