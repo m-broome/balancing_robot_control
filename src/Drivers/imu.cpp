@@ -29,6 +29,8 @@ ImuData& IMU::readData(){
 
 State& IMU::updateState(){
     this->state = this->mahonyFilter.mahonyFilter(this->imuData); 
+
+    //TODO CONVERT FROM GLOBAL BACK TO LOCAL COORDINATE SYSTEM
     return this->state;
 }
 
@@ -47,7 +49,7 @@ void IMU::printState(){
     // Serial.print("Z:"); Serial.print(this->state.z); Serial.print("\t");
     // Serial.print("RX:"); Serial.print(this->state.rx); Serial.print("\t");
     Serial.print("RY:"); Serial.print(this->state.ry); Serial.print("\n");
-    // Serial.print("RZ:"); Serial.print(this->state.rz); Serial.print("\n");
+    Serial.print("RZ:"); Serial.print(this->state.rz); Serial.print("\n");
     // Serial.print("VX:"); Serial.print(this->state.velX); Serial.print("\t");
     // Serial.print("VY:"); Serial.print(this->state.velY); Serial.print("\t");
     // Serial.print("VZ:"); Serial.print(this->state.velZ); Serial.print("\t");

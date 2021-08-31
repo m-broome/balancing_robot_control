@@ -36,6 +36,12 @@ struct State
     double accrz = 0;
 };
 
+struct ControlOutput
+{
+    double leftSpeed;
+    double rightSpeed;
+};
+
 struct Quaternion
 {
     double q0 = 1;
