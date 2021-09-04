@@ -18,7 +18,7 @@ StartUp startUp;
 State state, reference; 
 PIDController controller;
 ControlOutput controlOutput;
-double dt;
+float dt;
 Timer timer;
 
 void setup() {
@@ -42,7 +42,7 @@ void loop() {
     // get imu data
     imu.readData();
     state = imu.updateState();
-    imu.printState();    
+    // imu.printState();    
 
     // automatic startup/shutdown 
     startUp.detectStartUp(state);

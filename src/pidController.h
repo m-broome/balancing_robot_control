@@ -7,10 +7,9 @@
 
 class PIDController : public BaseController{
     private:
-        double dt = 1000/LOOP_FREQUENCY;
-        double ryPrev;
-        double ryErrorInt;
-        double limitIntegralWindup(double integralTerm);
+        float dt = 1000/LOOP_FREQUENCY;
+        float ryPrev;
+        float ryErrorInt;
 
     public:
         ControlOutput calculateControlOutput(State _state, State _reference);

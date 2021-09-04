@@ -10,6 +10,6 @@ void Timer::reset(){
     this->startt = millis();
 }
 
-void Timer::getElapsed(double& dt){
+void Timer::getElapsed(float& dt){
     dt = millis() - this->startt;
 }

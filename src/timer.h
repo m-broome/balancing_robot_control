@@ -7,13 +7,13 @@
 class Timer{
 
     private:
-        double startt;
-        double elapsedt;
+        float startt;
+        float elapsedt;
 
     public:
         void start();
         void reset();
-        void getElapsed(double& dt);
+        void getElapsed(float& dt);
 };
 
 #endif

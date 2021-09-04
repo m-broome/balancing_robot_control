@@ -64,11 +64,6 @@
 # define GYRO_OFFSET_RY 3 
 # define GYRO_OFFSET_RZ -26
 
-// Mahony Filter
-# define MAHONY_KP 0.02
-# define MAHONY_KI 0.01
-# define MAHONY_WINDUP_THRESHOLD 100
-
 // Complementary Filter 
 # define GYRO_WEIGHTING 0.99
 # define ACCELEROMETER_WEIGHTING 0.01
@@ -83,15 +78,15 @@
 //===========================================================================
 
 // Control Loop Timing
-# define LOOP_FREQUENCY 50
+# define LOOP_FREQUENCY 100.0
 # define WATCHDOG_THRESHOLD 300
 
 // PID Controller
 # define WINDUP_THRESHOLD 6000
 
-# define PID_K_RY 9
-# define PID_KD_RY 1
-# define PID_KI_RY 0
+# define PID_K_RY 14.0
+# define PID_KD_RY 5.0
+# define PID_KI_RY 0.0
 
 
 //===========================================================================

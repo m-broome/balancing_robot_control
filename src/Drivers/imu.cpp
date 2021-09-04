@@ -23,13 +23,48 @@ void IMU::initializeImu(){
 }
 
 ImuData& IMU::readData(){
-    imu.getMotion6(&this->imuData.accX,  &this->imuData.accY,  &this->imuData.accZ,  &this->imuData.gyroX, &this->imuData.gyroY, &this->imuData.gyroZ);
+    if (imu.getIntDataReadyStatus()){
+        imu.getMotion6(&this->imuData.accX,  &this->imuData.accY,  &this->imuData.accZ,  &this->imuData.gyroX, &this->imuData.gyroY, &this->imuData.gyroZ);
+    }
     return this->imuData;
 }
 
 State& IMU::updateState(){
-    this->state = this->mahonyFilter.mahonyFilter(this->imuData); 
+    // this->state = this->mahonyFilter(this->imuData); 
+    this->state = this->complementaryFilter(this->imuData); 
 
+    return this->state;
+}
+
+// Based implementation by jjrobots: https://github.com/jjrobots/B-ROBOT_EVO2/blob/master/Arduino/BROBOT_EVO2/MPU6050.ino
+State& IMU::complementaryFilter(ImuData imuData)
+{
+  float accel_angle = -atan2f((float)imuData.accX, (float)imuData.accZ) * RADS_TO_DEGREES;
+  float gyro_value = (imuData.gyroY - this->gyro_offset) * GYRO_TO_DEGREES_PER_SECOND;
+
+  // Complementary filter
+  // We integrate the gyro rate value to obtain the angle in the short term and we take the accelerometer angle with a low pass filter in the long term...
+  this->state.ry = GYRO_WEIGHTING * (this->state.ry + gyro_value * dt) + ACCELEROMETER_WEIGHTING * accel_angle;
+
+  // Gyro bias correction
+  // We supose that the long term mean of the gyro_value should tend to zero (gyro_offset). This means that the robot is not continuosly rotating.
+  int16_t correction = constrain(imuData.gyroY, this->gyro_offset - GYRO_CORRECTION_LIMIT, this->gyro_offset + GYRO_CORRECTION_LIMIT); // limit corrections...
+  this->gyro_offset = this->gyro_offset * GYRO_OFFSET_WEIGHTING + correction * GYRO_OFFSET_CORRECTION_WEIGHTING; // Time constant of this correction is around 20 sec.
+
+  return this->state;
+}
+
+State& IMU::mahonyFilter(ImuData imuData){
+    filter.updateIMU(imuData.gyroX * GYRO_TO_RADS_PER_SECOND, imuData.gyroY * GYRO_TO_RADS_PER_SECOND, imuData.gyroZ * GYRO_TO_RADS_PER_SECOND, imuData.accX, imuData.accY, imuData.accZ);
+
+    float roll = filter.getRoll();
+    float pitch = filter.getPitch();
+    float yaw = filter.getYaw();
+
+    this->state.rx = pitch * RADS_TO_DEGREES;
+    this->state.ry = -roll * RADS_TO_DEGREES;
+    this->state.rz = yaw * RADS_TO_DEGREES;
+    
     //TODO CONVERT FROM GLOBAL BACK TO LOCAL COORDINATE SYSTEM
     return this->state;
 }
@@ -49,7 +84,7 @@ void IMU::printState(){
     // Serial.print("Z:"); Serial.print(this->state.z); Serial.print("\t");
     // Serial.print("RX:"); Serial.print(this->state.rx); Serial.print("\t");
     Serial.print("RY:"); Serial.print(this->state.ry); Serial.print("\n");
-    Serial.print("RZ:"); Serial.print(this->state.rz); Serial.print("\n");
+    // Serial.print("RZ:"); Serial.print(this->state.rz); Serial.print("\n");
     // Serial.print("VX:"); Serial.print(this->state.velX); Serial.print("\t");
     // Serial.print("VY:"); Serial.print(this->state.velY); Serial.print("\t");
     // Serial.print("VZ:"); Serial.print(this->state.velZ); Serial.print("\t");

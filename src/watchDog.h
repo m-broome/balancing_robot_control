@@ -3,7 +3,7 @@
 class WatchDog {
 private:
     Timer timer;
-    double_t dt;
+    float dt;
 
 public:
     void monitorExecution(void (*loopIteration)());

@@ -3,8 +3,9 @@
 
 #include <I2Cdev.h>
 #include <MPU6050.h>
+#include <MahonyAHRS.h>
+
 #include "Wire.h"
-#include "mahonyFilter.h"
 #include "timer.h"
 #include "dataTypes.h"
 #include "config.h"
@@ -12,13 +13,17 @@
 
 class IMU {
     private:
-        double dt = 1/LOOP_FREQUENCY;
+        float dt = 1/LOOP_FREQUENCY;
+        float gyro_offset = 0;
 
         MPU6050 imu;
         ImuData imuData;
-        MahonyFilter mahonyFilter;
+        Mahony filter;
         State state;
+
         void initializeImu();
+        State& mahonyFilter(ImuData imuData);
+        State& complementaryFilter(ImuData imuData);
         
     public:
         IMU();
