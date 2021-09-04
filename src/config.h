@@ -28,7 +28,8 @@
 #define LEFT_MOTOR_DIR -1
 #define RIGHT_MOTOR_DIR 1
 
-#define MICROSTEPPING_FACTOR 16
+#define LEFT_DRIVER_MICROSTEPS 16
+#define RIGHT_DRIVER_MICROSTEPS 16
 
 
 //===========================================================================
@@ -68,6 +69,14 @@
 # define MAHONY_KI 0.01
 # define MAHONY_WINDUP_THRESHOLD 100
 
+// Complementary Filter 
+# define GYRO_WEIGHTING 0.99
+# define ACCELEROMETER_WEIGHTING 0.01
+
+# define GYRO_CORRECTION_LIMIT 10
+# define GYRO_OFFSET_WEIGHTING 0.9995
+# define GYRO_OFFSET_CORRECTION_WEIGHTING 0.0005
+
 
 //===========================================================================
 //============================= Controller ==================================
@@ -80,8 +89,8 @@
 // PID Controller
 # define WINDUP_THRESHOLD 6000
 
-# define PID_K_RY 6000
-# define PID_KD_RY 6
+# define PID_K_RY 9
+# define PID_KD_RY 1
 # define PID_KI_RY 0
 
 

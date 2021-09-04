@@ -14,6 +14,7 @@ void RightMotorController::initialiseController(){
     motor.setMaxSpeed(MAX_SPEED);
 	motor.setAcceleration(MAX_ACCELERATION);
     this->motorDir = RIGHT_MOTOR_DIR;
+    this->microsteps = RIGHT_DRIVER_MICROSTEPS;
 }
 
 void RightMotorController::applyControl(ControlOutput controlOutput){

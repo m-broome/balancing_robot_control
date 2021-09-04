@@ -10,6 +10,7 @@ class BaseMotorController
     protected:
         AccelStepper motor;
         int motorDir;
+        int microsteps;
 
     public:
         virtual void initialiseController() = 0;

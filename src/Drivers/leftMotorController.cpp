@@ -15,6 +15,7 @@ void LeftMotorController::initialiseController(){
     motor.setMaxSpeed(MAX_SPEED);
 	motor.setAcceleration(MAX_ACCELERATION);
     this->motorDir = LEFT_MOTOR_DIR;
+    this->microsteps = LEFT_DRIVER_MICROSTEPS;
 }
 
 void LeftMotorController::applyControl(ControlOutput controlOutput){
