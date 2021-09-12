@@ -95,4 +95,16 @@
 
 // Switch on and switch off
 # define SWITCH_ON_ANGLE_DEGREES 5
-# define SWITCH_OFF_ANGLE_DEGREES 60
+# define SWITCH_OFF_ANGLE_DEGREES 40 
+
+
+//===========================================================================
+//============================= Serial Communication ========================
+//===========================================================================
+
+// Serial frequency
+# define SERIAL_BAUD_RATE 9600
+
+// Json parameters 
+# define JSON_DOCUMENT_SIZE 512
+

@@ -3,6 +3,7 @@
 
 #include "Drivers/imu.h"
 #include "Drivers/baseMotorController.h"
+#include "Comms/serial.h"
 #include "pidController.h"
 #include "Drivers/leftMotorController.h"
 #include "Drivers/rightMotorController.h"
@@ -10,7 +11,7 @@
 #include "config.h"
 #include "startup.h"
 
-
+SerialProxy serialProxy;
 IMU imu;
 LeftMotorController leftMotor;
 RightMotorController rightMotor;
@@ -22,6 +23,7 @@ float dt;
 Timer timer;
 
 void setup() {
+  serialProxy = SerialProxy();
   imu = IMU();
   startUp = StartUp();
   leftMotor = LeftMotorController();
@@ -38,6 +40,11 @@ void loop() {
   {
     timer.reset();
     // Serial.print("Loop Frequency:"); Serial.print(1000/dt); Serial.print("\n");
+
+    // get serial commands
+    if (Serial.available()){
+      serialProxy.executeCommand(imu, reference, controlOutput);
+    }
 
     // get imu data
     imu.readData();
