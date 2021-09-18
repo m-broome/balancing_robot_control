@@ -12,6 +12,8 @@ class StartUp{
 
     public:
         StartUp();
+        void disableMotors();
+        void enableMotors();
         void detectStartUp(State state);
 };
 

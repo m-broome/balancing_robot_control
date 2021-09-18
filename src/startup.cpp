@@ -13,13 +13,21 @@ StartUp::StartUp(){
     this->motorsDisabled = true;
 }
 
+void StartUp::enableMotors(){
+    digitalWrite(DRIVER_SLEEP, HIGH);
+    this->motorsDisabled = false;
+}
+
+void StartUp::disableMotors(){
+    digitalWrite(DRIVER_SLEEP, LOW);
+    this->motorsDisabled = true;
+}
+
 void StartUp::detectStartUp(State state){
     if (abs(state.ry) <= SWITCH_ON_ANGLE_DEGREES && this->motorsDisabled){
-        digitalWrite(DRIVER_SLEEP, HIGH);
-        this->motorsDisabled = false;
+        this->enableMotors();
     }
     else if (abs(state.ry) >= SWITCH_OFF_ANGLE_DEGREES && !this->motorsDisabled){
-        digitalWrite(DRIVER_SLEEP, LOW);
-        this->motorsDisabled = true;
+        this->disableMotors();
     }
 }
