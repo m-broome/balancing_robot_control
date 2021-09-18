@@ -20,24 +20,37 @@ void IMU::initializeImu(){
     this->imu.setXGyroOffset(GYRO_OFFSET_RX);
     this->imu.setYGyroOffset(GYRO_OFFSET_RY);
     this->imu.setZGyroOffset(GYRO_OFFSET_RZ);
+
+    // Allow Imu to reach steady state
+    int i = 0;
+    while(i <= IMU_INITIALISATION_ITERATIONS){
+        if (this->readData()){
+            this->updateState((ControlOutput){0, 0});
+            i++;
+        } 
+    }
 }
 
-ImuData& IMU::readData(){
+bool IMU::readData(){
     if (imu.getIntDataReadyStatus()){
         imu.getMotion6(&this->imuData.accX,  &this->imuData.accY,  &this->imuData.accZ,  &this->imuData.gyroX, &this->imuData.gyroY, &this->imuData.gyroZ);
+        return true;
     }
-    return this->imuData;
+    return false;
 }
 
-State& IMU::updateState(){
-    // this->state = this->mahonyFilter(this->imuData); 
-    this->state = this->complementaryFilter(this->imuData); 
+State& IMU::updateState(ControlOutput controlOutput){
+    this->state.ry = this->complementaryFilter(this->imuData); 
+    this->state.velX = (controlOutput.leftSpeed * LEFT_STEPS_PER_SECOND_TO_METRES_PER_SECOND + controlOutput.rightSpeed * RIGHT_STEPS_PER_SECOND_TO_METRES_PER_SECOND) / 2;
+    this->state.velrz = (controlOutput.leftSpeed * LEFT_MOTOR_STEP_ANGLE_DEGREES - controlOutput.rightSpeed * LEFT_MOTOR_STEP_ANGLE_DEGREES) * 2;
+    this->state.x += this->state.velX * this->dt;
+    this->state.rz += this->state.velrz * this->dt;
 
     return this->state;
 }
 
 // Based implementation by jjrobots: https://github.com/jjrobots/B-ROBOT_EVO2/blob/master/Arduino/BROBOT_EVO2/MPU6050.ino
-State& IMU::complementaryFilter(ImuData imuData)
+float IMU::complementaryFilter(ImuData imuData)
 {
   float accel_angle = -atan2f((float)imuData.accX, (float)imuData.accZ) * RADS_TO_DEGREES;
   float gyro_value = (imuData.gyroY - this->gyro_offset) * GYRO_TO_DEGREES_PER_SECOND;
@@ -51,7 +64,7 @@ State& IMU::complementaryFilter(ImuData imuData)
   int16_t correction = constrain(imuData.gyroY, this->gyro_offset - GYRO_CORRECTION_LIMIT, this->gyro_offset + GYRO_CORRECTION_LIMIT); // limit corrections...
   this->gyro_offset = this->gyro_offset * GYRO_OFFSET_WEIGHTING + correction * GYRO_OFFSET_CORRECTION_WEIGHTING; // Time constant of this correction is around 20 sec.
 
-  return this->state;
+  return this->state.ry;
 }
 
 State& IMU::mahonyFilter(ImuData imuData){
@@ -61,7 +74,7 @@ State& IMU::mahonyFilter(ImuData imuData){
     float pitch = filter.getPitch();
     float yaw = filter.getYaw();
 
-    this->state.rx = pitch * RADS_TO_DEGREES;
+    // this->state.rx = pitch * RADS_TO_DEGREES;
     this->state.ry = -roll * RADS_TO_DEGREES;
     this->state.rz = yaw * RADS_TO_DEGREES;
     
@@ -79,22 +92,9 @@ void IMU::printData(){
 }
 
 void IMU::printState(){
-    // Serial.print("X:"); Serial.print(this->state.x); Serial.print("\t");
-    // Serial.print("Y:"); Serial.print(this->state.y); Serial.print("\t");
-    // Serial.print("Z:"); Serial.print(this->state.z); Serial.print("\t");
-    // Serial.print("RX:"); Serial.print(this->state.rx); Serial.print("\t");
-    Serial.print("RY:"); Serial.print(this->state.ry); Serial.print("\n");
-    // Serial.print("RZ:"); Serial.print(this->state.rz); Serial.print("\n");
-    // Serial.print("VX:"); Serial.print(this->state.velX); Serial.print("\t");
-    // Serial.print("VY:"); Serial.print(this->state.velY); Serial.print("\t");
-    // Serial.print("VZ:"); Serial.print(this->state.velZ); Serial.print("\t");
-    // Serial.print("VRX:"); Serial.print(this->state.velrx); Serial.print("\t");
-    // Serial.print("VRY:"); Serial.print(this->state.velry); Serial.print("\t");
-    // Serial.print("VRZ:"); Serial.print(this->state.velrz); Serial.print("\t");
-    // Serial.print("AX:"); Serial.print(this->state.accX); Serial.print("\t");
-    // Serial.print("AY:"); Serial.print(this->state.accY); Serial.print("\t");
-    // Serial.print("AZ:"); Serial.print(this->state.accZ); Serial.print("\t");
-    // Serial.print("ARX:"); Serial.print(this->state.accrx); Serial.print("\t");
-    // Serial.print("ARY:"); Serial.print(this->state.accry); Serial.print("\t");
-    // Serial.print("ARZ:"); Serial.println(this->state.accrz);
+    Serial.print("X:"); Serial.print(this->state.x); Serial.print("\t");
+    Serial.print("RY:"); Serial.print(this->state.ry); Serial.print("\t");
+    Serial.print("RZ:"); Serial.print(this->state.rz); Serial.print("\t");
+    Serial.print("VX:"); Serial.print(this->state.velX); Serial.print("\t");
+    Serial.print("VRZ:"); Serial.print(this->state.velrz); Serial.print("\n");
 }

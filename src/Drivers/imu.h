@@ -23,12 +23,12 @@ class IMU {
 
         void initializeImu();
         State& mahonyFilter(ImuData imuData);
-        State& complementaryFilter(ImuData imuData);
+        float complementaryFilter(ImuData imuData);
         
     public:
         IMU();
-        ImuData& readData();
-        State& updateState();
+        bool readData();
+        State& updateState(ControlOutput controlOutput);
         void printData();
         void printState();
 };
