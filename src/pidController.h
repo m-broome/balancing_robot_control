@@ -8,8 +8,15 @@
 class PIDController : public BaseController{
     private:
         float dt = 1000/LOOP_FREQUENCY;
+
         float ryPrev;
         float ryErrorInt;
+
+        float xPrev;
+        float xErrorInt;
+
+        float velXPrev;
+        float velXErrorInt;
 
     public:
         ControlOutput calculateControlOutput(State _state, State _reference);

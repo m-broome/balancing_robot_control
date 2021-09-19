@@ -19,6 +19,24 @@
 
 
 //===========================================================================
+//============================= Kinematics ==================================
+//===========================================================================
+
+#define WHEEL_RADIUS_METERS 0.045
+#define ROBOT_RADIUS_METERS 0.13
+
+
+
+//===========================================================================
+//============================= Motion Constraints =======================
+//===========================================================================
+
+// Switch on and switch off
+# define SWITCH_ON_ANGLE_DEGREES 3
+# define SWITCH_OFF_ANGLE_DEGREES 40
+
+
+//===========================================================================
 //============================= Motors ======================================
 //===========================================================================
 
@@ -31,10 +49,26 @@
 #define LEFT_DRIVER_MICROSTEPS 16
 #define RIGHT_DRIVER_MICROSTEPS 16
 
+#define LEFT_MOTOR_STEP_ANGLE_DEGREES 1.8
+#define RIGHT_MOTOR_STEP_ANGLE_DEGREES 1.8
+
+// Unit Conversions
+# define RADS_TO_DEGREES 180/3.1415
+# define DEGREES_TO_RADS 3.1415/180
+
+#define LEFT_MOTOR_STEP_ANGLE_RADS LEFT_MOTOR_STEP_ANGLE_DEGREES * DEGREES_TO_RADS
+#define RIGHT_MOTOR_STEP_ANGLE_RADS RIGHT_MOTOR_STEP_ANGLE_DEGREES * DEGREES_TO_RADS
+
+# define LEFT_STEPS_PER_SECOND_TO_METRES_PER_SECOND  LEFT_MOTOR_STEP_ANGLE_DEGREES * DEGREES_TO_RADS * WHEEL_RADIUS_METERS
+# define RIGHT_STEPS_PER_SECOND_TO_METRES_PER_SECOND  RIGHT_MOTOR_STEP_ANGLE_DEGREES * DEGREES_TO_RADS * WHEEL_RADIUS_METERS
+
 
 //===========================================================================
 //============================= IMU =========================================
 //===========================================================================
+
+// Initialisation
+# define IMU_INITIALISATION_ITERATIONS 100
 
 // Sensitivities
 # define GYRO_SENSITIVITY 250 // degrees/second
@@ -42,9 +76,6 @@
 # define OUTPUT_SCALE 32767.5 //(int16 represents full scale)
 
 // Unit Conversions
-# define RADS_TO_DEGREES 180/3.1415
-# define DEGREES_TO_RADS 3.1415/180
-
 # define G_TO_MS2 9.81
 # define MS2_TO_G 1/9.81
 
@@ -82,20 +113,27 @@
 # define WATCHDOG_THRESHOLD 300
 
 // PID Controller
-# define WINDUP_THRESHOLD 6000
+// Balance Control
+# define PID_K_RY 35.0
+# define PID_KD_RY 0.8
+# define PID_KI_RY 0.004
+# define BALANCE_WINDUP_THRESHOLD 6000
 
-# define PID_K_RY 14.0
-# define PID_KD_RY 5.0
-# define PID_KI_RY 0.0
+// Speed Control
+# define PID_K_VX 7.0
+# define PID_KD_VX 0.006
+# define PID_KI_VX 0.0015
+# define SPEED_WINDUP_THRESHOLD 600
 
+// Position Control
+# define PID_K_X 30.0
+# define PID_KD_X 0.0
+# define PID_KI_X 0.0
+# define POSITION_WINDUP_THRESHOLD 300
 
-//===========================================================================
-//============================= Motion Constraints ==========================
-//===========================================================================
-
-// Switch on and switch off
-# define SWITCH_ON_ANGLE_DEGREES 5
-# define SWITCH_OFF_ANGLE_DEGREES 40 
+// Rotation Control
+# define POSITION_VEL_RZ 90
+# define ANGULAR_POSITION_ERROR_THRESHOLD 1
 
 
 //===========================================================================

@@ -34,6 +34,11 @@ void setup() {
 }
 
 void loop() {
+  // get serial commands
+  if (Serial.available()){
+    serialProxy.executeCommand(startUp, imu, reference, controlOutput);
+  }
+
   // evaluate time elapsed
   timer.getElapsed(dt);
   if (dt >= 1000/LOOP_FREQUENCY)
@@ -41,15 +46,9 @@ void loop() {
     timer.reset();
     // Serial.print("Loop Frequency:"); Serial.print(1000/dt); Serial.print("\n");
 
-    // get serial commands
-    if (Serial.available()){
-      serialProxy.executeCommand(imu, reference, controlOutput);
-    }
-
     // get imu data
     imu.readData();
-    state = imu.updateState();
-    // imu.printState();    
+    state = imu.updateState(controlOutput);
 
     // automatic startup/shutdown 
     startUp.detectStartUp(state);
@@ -61,6 +60,7 @@ void loop() {
     leftMotor.applyControl(controlOutput);
     rightMotor.applyControl(controlOutput);
   }
+
   // run motors 
   leftMotor.run();
   rightMotor.run();

@@ -42,7 +42,7 @@ bool IMU::readData(){
 State& IMU::updateState(ControlOutput controlOutput){
     this->state.ry = this->complementaryFilter(this->imuData); 
     this->state.velX = (controlOutput.leftSpeed * LEFT_STEPS_PER_SECOND_TO_METRES_PER_SECOND + controlOutput.rightSpeed * RIGHT_STEPS_PER_SECOND_TO_METRES_PER_SECOND) / 2;
-    this->state.velrz = (controlOutput.leftSpeed * LEFT_MOTOR_STEP_ANGLE_DEGREES - controlOutput.rightSpeed * LEFT_MOTOR_STEP_ANGLE_DEGREES) * 2;
+    this->state.velrz = (controlOutput.leftSpeed * LEFT_STEPS_PER_SECOND_TO_METRES_PER_SECOND - controlOutput.rightSpeed * RIGHT_STEPS_PER_SECOND_TO_METRES_PER_SECOND) * (RADS_TO_DEGREES/ROBOT_RADIUS_METERS);
     this->state.x += this->state.velX * this->dt;
     this->state.rz += this->state.velrz * this->dt;
 
@@ -88,7 +88,7 @@ void IMU::printData(){
     Serial.print("Raw accZ:"); Serial.print(this->imuData.accZ); Serial.print("\t");
     Serial.print("Raw angVelX:"); Serial.print(this->imuData.gyroX); Serial.print("\t");
     Serial.print("Raw angVelY:"); Serial.print(this->imuData.gyroY); Serial.print("\t");
-    Serial.print("Raw angVelZ:"); Serial.println(this->imuData.gyroZ);
+    Serial.print("Raw angVelZ:"); Serial.print(this->imuData.gyroZ); Serial.print("\n");
 }
 
 void IMU::printState(){
