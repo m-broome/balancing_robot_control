@@ -35,6 +35,9 @@
 # define SWITCH_ON_ANGLE_DEGREES 3
 # define SWITCH_OFF_ANGLE_DEGREES 40
 
+// Max tilt angle 
+# define MAX_TILT_ANGLE 10 
+
 
 //===========================================================================
 //============================= Motors ======================================
@@ -110,19 +113,20 @@
 
 // Control Loop Timing
 # define LOOP_FREQUENCY 100.0
+# define LOOP_PERIOD 1/LOOP_FREQUENCY
 # define WATCHDOG_THRESHOLD 300
 
 // PID Controller
 // Balance Control
 # define PID_K_RY 35.0
-# define PID_KD_RY 0.8
-# define PID_KI_RY 0.004
+# define PID_KD_RY 200
+# define PID_KI_RY 0.14
 # define BALANCE_WINDUP_THRESHOLD 6000
 
 // Speed Control
 # define PID_K_VX 7.0
-# define PID_KD_VX 0.006
-# define PID_KI_VX 0.0015
+# define PID_KD_VX 0.042
+# define PID_KI_VX 0.0105
 # define SPEED_WINDUP_THRESHOLD 600
 
 // Position Control

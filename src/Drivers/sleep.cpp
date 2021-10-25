@@ -1,33 +1,40 @@
-# include "startup.h"
-
+# include "sleep.h"
 # include <AccelStepper.h>
-
-# include "Drivers/leftMotorController.h"
-# include "Drivers/rightMotorController.h"
 # include "dataTypes.h"
 # include "config.h"
 
-StartUp::StartUp(){
+Sleep::Sleep()
+{
     pinMode(DRIVER_SLEEP, OUTPUT);
+
     digitalWrite(DRIVER_SLEEP, LOW);
+
     this->motorsDisabled = true;
 }
 
-void StartUp::enableMotors(){
+void Sleep::enableMotors()
+{
     digitalWrite(DRIVER_SLEEP, HIGH);
+
     this->motorsDisabled = false;
 }
 
-void StartUp::disableMotors(){
+void Sleep::disableMotors()
+{
     digitalWrite(DRIVER_SLEEP, LOW);
+
     this->motorsDisabled = true;
 }
 
-void StartUp::detectStartUp(State state){
+void Sleep::detectStartUp(State& state)
+{
     if (abs(state.ry) <= SWITCH_ON_ANGLE_DEGREES && this->motorsDisabled){
+
         this->enableMotors();
     }
     else if (abs(state.ry) >= SWITCH_OFF_ANGLE_DEGREES && !this->motorsDisabled){
+
         this->disableMotors();
     }
+    state.sleep = this->motorsDisabled;
 }

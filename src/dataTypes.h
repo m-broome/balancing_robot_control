@@ -21,6 +21,9 @@ struct State
     bool speedControl = false;
     bool balanceControl = false;
 
+    // Sleep
+    bool sleep = false;
+
     // Control States
     float x = 0;
     float ry = 0;

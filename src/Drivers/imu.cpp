@@ -4,13 +4,17 @@
 #include <MPU6050.h>
 
 
-IMU::IMU(){
+IMU::IMU()
+{
     Serial.begin(115200);
+
     this->initializeImu();
 }
 
-void IMU::initializeImu(){
+void IMU::initializeImu()
+{
     Wire.begin();
+
     this->imu.initialize();
 
     // Set Imu Offsets
@@ -23,66 +27,70 @@ void IMU::initializeImu(){
 
     // Allow Imu to reach steady state
     int i = 0;
+
+    ControlOutput controlOutput = (ControlOutput){0, 0};
+
     while(i <= IMU_INITIALISATION_ITERATIONS){
-        if (this->readData()){
-            this->updateState((ControlOutput){0, 0});
+
+        if (this->readData())
+        {
+            this->updateState(controlOutput, false);
+
             i++;
         } 
     }
 }
 
-bool IMU::readData(){
-    if (imu.getIntDataReadyStatus()){
+bool IMU::readData()
+{
+    if (imu.getIntDataReadyStatus())
+    {
         imu.getMotion6(&this->imuData.accX,  &this->imuData.accY,  &this->imuData.accZ,  &this->imuData.gyroX, &this->imuData.gyroY, &this->imuData.gyroZ);
+
         return true;
     }
     return false;
 }
 
-State& IMU::updateState(ControlOutput controlOutput){
+State& IMU::updateState(const ControlOutput& controlOutput,const bool& motorsDisabled)
+{
     this->state.ry = this->complementaryFilter(this->imuData); 
-    this->state.velX = (controlOutput.leftSpeed * LEFT_STEPS_PER_SECOND_TO_METRES_PER_SECOND + controlOutput.rightSpeed * RIGHT_STEPS_PER_SECOND_TO_METRES_PER_SECOND) / 2;
-    this->state.velrz = (controlOutput.leftSpeed * LEFT_STEPS_PER_SECOND_TO_METRES_PER_SECOND - controlOutput.rightSpeed * RIGHT_STEPS_PER_SECOND_TO_METRES_PER_SECOND) * (RADS_TO_DEGREES/ROBOT_RADIUS_METERS);
-    this->state.x += this->state.velX * this->dt;
-    this->state.rz += this->state.velrz * this->dt;
 
+    if (!motorsDisabled)
+    {
+        this->state.velX = (controlOutput.leftSpeed * LEFT_STEPS_PER_SECOND_TO_METRES_PER_SECOND + controlOutput.rightSpeed * RIGHT_STEPS_PER_SECOND_TO_METRES_PER_SECOND) / 2;
+
+        this->state.velrz = (controlOutput.leftSpeed * LEFT_STEPS_PER_SECOND_TO_METRES_PER_SECOND - controlOutput.rightSpeed * RIGHT_STEPS_PER_SECOND_TO_METRES_PER_SECOND) * (RADS_TO_DEGREES/ROBOT_RADIUS_METERS);
+        
+        this->state.x += this->state.velX * LOOP_PERIOD;
+        
+        this->state.rz += this->state.velrz * LOOP_PERIOD;
+    }
     return this->state;
 }
 
 // Based implementation by jjrobots: https://github.com/jjrobots/B-ROBOT_EVO2/blob/master/Arduino/BROBOT_EVO2/MPU6050.ino
-float IMU::complementaryFilter(ImuData imuData)
+float IMU::complementaryFilter(const ImuData& imuData)
 {
-  float accel_angle = -atan2f((float)imuData.accX, (float)imuData.accZ) * RADS_TO_DEGREES;
-  float gyro_value = (imuData.gyroY - this->gyro_offset) * GYRO_TO_DEGREES_PER_SECOND;
+    float accel_angle = -atan2f((float)imuData.accX, (float)imuData.accZ) * RADS_TO_DEGREES;
 
-  // Complementary filter
-  // We integrate the gyro rate value to obtain the angle in the short term and we take the accelerometer angle with a low pass filter in the long term...
-  this->state.ry = GYRO_WEIGHTING * (this->state.ry + gyro_value * dt) + ACCELEROMETER_WEIGHTING * accel_angle;
+    float gyro_value = (imuData.gyroY - this->gyro_offset) * GYRO_TO_DEGREES_PER_SECOND;
 
-  // Gyro bias correction
-  // We supose that the long term mean of the gyro_value should tend to zero (gyro_offset). This means that the robot is not continuosly rotating.
-  int16_t correction = constrain(imuData.gyroY, this->gyro_offset - GYRO_CORRECTION_LIMIT, this->gyro_offset + GYRO_CORRECTION_LIMIT); // limit corrections...
-  this->gyro_offset = this->gyro_offset * GYRO_OFFSET_WEIGHTING + correction * GYRO_OFFSET_CORRECTION_WEIGHTING; // Time constant of this correction is around 20 sec.
-
-  return this->state.ry;
-}
-
-State& IMU::mahonyFilter(ImuData imuData){
-    filter.updateIMU(imuData.gyroX * GYRO_TO_RADS_PER_SECOND, imuData.gyroY * GYRO_TO_RADS_PER_SECOND, imuData.gyroZ * GYRO_TO_RADS_PER_SECOND, imuData.accX, imuData.accY, imuData.accZ);
-
-    float roll = filter.getRoll();
-    float pitch = filter.getPitch();
-    float yaw = filter.getYaw();
-
-    // this->state.rx = pitch * RADS_TO_DEGREES;
-    this->state.ry = -roll * RADS_TO_DEGREES;
-    this->state.rz = yaw * RADS_TO_DEGREES;
+    // Complementary filter
+    // We integrate the gyro rate value to obtain the angle in the short term and we take the accelerometer angle with a low pass filter in the long term...
+    float ry = GYRO_WEIGHTING * (this->state.ry + gyro_value * LOOP_PERIOD) + ACCELEROMETER_WEIGHTING * accel_angle;
     
-    //TODO CONVERT FROM GLOBAL BACK TO LOCAL COORDINATE SYSTEM
-    return this->state;
+    // Gyro bias correction
+    // We supose that the long term mean of the gyro_value should tend to zero (gyro_offset). This means that the robot is not continuosly rotating.
+    int16_t correction = constrain(imuData.gyroY, this->gyro_offset - GYRO_CORRECTION_LIMIT, this->gyro_offset + GYRO_CORRECTION_LIMIT); // limit corrections...
+
+    this->gyro_offset = this->gyro_offset * GYRO_OFFSET_WEIGHTING + correction * GYRO_OFFSET_CORRECTION_WEIGHTING; // Time constant of this correction is around 20 sec.
+
+    return ry;
 }
 
-void IMU::printData(){
+void IMU::printData()
+{
     Serial.print("Raw accX:"); Serial.print(this->imuData.accX); Serial.print("\t");
     Serial.print("Raw accY:"); Serial.print(this->imuData.accY); Serial.print("\t");
     Serial.print("Raw accZ:"); Serial.print(this->imuData.accZ); Serial.print("\t");
@@ -91,7 +99,8 @@ void IMU::printData(){
     Serial.print("Raw angVelZ:"); Serial.print(this->imuData.gyroZ); Serial.print("\n");
 }
 
-void IMU::printState(){
+void IMU::printState()
+{
     Serial.print("X:"); Serial.print(this->state.x); Serial.print("\t");
     Serial.print("RY:"); Serial.print(this->state.ry); Serial.print("\t");
     Serial.print("RZ:"); Serial.print(this->state.rz); Serial.print("\t");

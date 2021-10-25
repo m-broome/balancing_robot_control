@@ -2,10 +2,13 @@
 #define PIDCONTROLLER_H
 
 #include <I2Cdev.h>
-#include "baseController.h"
 #include "config.h"
+#include "dataTypes.h"
 
-class PIDController : public BaseController{
+class Controller{
+    public:
+        ControlOutput calculateControlOutput(State& _state, const State& _reference);
+        
     private:
         float dt = 1000/LOOP_FREQUENCY;
 
@@ -18,8 +21,6 @@ class PIDController : public BaseController{
         float velXPrev;
         float velXErrorInt;
 
-    public:
-        ControlOutput calculateControlOutput(State _state, State _reference);
 };
 
 #endif

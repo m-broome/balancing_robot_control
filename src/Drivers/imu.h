@@ -6,31 +6,37 @@
 #include <MahonyAHRS.h>
 
 #include "Wire.h"
-#include "timer.h"
 #include "dataTypes.h"
 #include "config.h"
 
 
-class IMU {
+class IMU
+{
+    public:
+        IMU();
+        
+        bool readData();
+
+        State& updateState(const ControlOutput& controlOutput, const bool& motorsEnabled);
+
+        void printData();
+
+        void printState();
+
     private:
-        float dt = 1/LOOP_FREQUENCY;
         float gyro_offset = 0;
 
         MPU6050 imu;
+
         ImuData imuData;
+
         Mahony filter;
+
         State state;
 
         void initializeImu();
-        State& mahonyFilter(ImuData imuData);
-        float complementaryFilter(ImuData imuData);
-        
-    public:
-        IMU();
-        bool readData();
-        State& updateState(ControlOutput controlOutput);
-        void printData();
-        void printState();
+
+        float complementaryFilter(const ImuData& imuData);
 };
 
 #endif
