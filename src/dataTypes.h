@@ -16,44 +16,26 @@ struct ImuData
 
 struct State
 {
-    double x = 0;
-    double y = 0;
-    double z = 0;
-    double rx = 0;
-    double ry = 0;
-    double rz = 0;
-    double velX = 0;
-    double velY = 0;
-    double velZ = 0;
-    double velrx = 0;
-    double velry = 0;
-    double velrz = 0;
-    double accX = 0;
-    double accY = 0;
-    double accZ = 0;
-    double accrx = 0;
-    double accry = 0;
-    double accrz = 0;
+    // Control type
+    bool positionControl = true;
+    bool speedControl = false;
+    bool balanceControl = false;
+
+    // Sleep
+    bool sleep = false;
+
+    // Control States
+    float x = 0;
+    float ry = 0;
+    float rz = 0;
+    float velX = 0;
+    float velrz = 0;
 };
 
-struct Quaternion
+struct ControlOutput
 {
-    double q0 = 1;
-    double q1 = 0;
-    double q2 = 0;
-    double q3 = 1;
+    float leftSpeed;
+    float rightSpeed;
 };
-
-struct EulerAngles {
-    double roll, pitch, yaw;
-};
-
-struct vect3
-{
-    double v1 = 0;
-    double v2 = 0;
-    double v3 = 0;
-};
-
 
 #endif

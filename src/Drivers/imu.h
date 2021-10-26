@@ -3,29 +3,40 @@
 
 #include <I2Cdev.h>
 #include <MPU6050.h>
+#include <MahonyAHRS.h>
+
 #include "Wire.h"
-#include "mahonyFilter.h"
-#include "timer.h"
 #include "dataTypes.h"
 #include "config.h"
 
 
-class IMU {
-    private:
-        double dt = 1/LOOP_FREQUENCY;
-
-        MPU6050 imu;
-        ImuData imuData;
-        MahonyFilter mahonyFilter;
-        State state;
-        void initializeImu();
-        
+class IMU
+{
     public:
         IMU();
-        ImuData& readData();
-        State& updateState();
+        
+        bool readData();
+
+        State& updateState(const ControlOutput& controlOutput, const bool& motorsEnabled);
+
         void printData();
+
         void printState();
+
+    private:
+        float gyro_offset = 0;
+
+        MPU6050 imu;
+
+        ImuData imuData;
+
+        Mahony filter;
+
+        State state;
+
+        void initializeImu();
+
+        float complementaryFilter(const ImuData& imuData);
 };
 
 #endif

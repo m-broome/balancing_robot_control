@@ -19,6 +19,27 @@
 
 
 //===========================================================================
+//============================= Kinematics ==================================
+//===========================================================================
+
+#define WHEEL_RADIUS_METERS 0.045
+#define ROBOT_RADIUS_METERS 0.13
+
+
+
+//===========================================================================
+//============================= Motion Constraints =======================
+//===========================================================================
+
+// Switch on and switch off
+# define SWITCH_ON_ANGLE_DEGREES 3
+# define SWITCH_OFF_ANGLE_DEGREES 40
+
+// Max tilt angle 
+# define MAX_TILT_ANGLE 10 
+
+
+//===========================================================================
 //============================= Motors ======================================
 //===========================================================================
 
@@ -28,12 +49,29 @@
 #define LEFT_MOTOR_DIR -1
 #define RIGHT_MOTOR_DIR 1
 
-#define MICROSTEPPING_FACTOR 16
+#define LEFT_DRIVER_MICROSTEPS 16
+#define RIGHT_DRIVER_MICROSTEPS 16
+
+#define LEFT_MOTOR_STEP_ANGLE_DEGREES 1.8
+#define RIGHT_MOTOR_STEP_ANGLE_DEGREES 1.8
+
+// Unit Conversions
+# define RADS_TO_DEGREES 180/3.1415
+# define DEGREES_TO_RADS 3.1415/180
+
+#define LEFT_MOTOR_STEP_ANGLE_RADS LEFT_MOTOR_STEP_ANGLE_DEGREES * DEGREES_TO_RADS
+#define RIGHT_MOTOR_STEP_ANGLE_RADS RIGHT_MOTOR_STEP_ANGLE_DEGREES * DEGREES_TO_RADS
+
+# define LEFT_STEPS_PER_SECOND_TO_METRES_PER_SECOND  LEFT_MOTOR_STEP_ANGLE_DEGREES * DEGREES_TO_RADS * WHEEL_RADIUS_METERS
+# define RIGHT_STEPS_PER_SECOND_TO_METRES_PER_SECOND  RIGHT_MOTOR_STEP_ANGLE_DEGREES * DEGREES_TO_RADS * WHEEL_RADIUS_METERS
 
 
 //===========================================================================
 //============================= IMU =========================================
 //===========================================================================
+
+// Initialisation
+# define IMU_INITIALISATION_ITERATIONS 100
 
 // Sensitivities
 # define GYRO_SENSITIVITY 250 // degrees/second
@@ -41,9 +79,6 @@
 # define OUTPUT_SCALE 32767.5 //(int16 represents full scale)
 
 // Unit Conversions
-# define RADS_TO_DEGREES 180/3.1415
-# define DEGREES_TO_RADS 3.1415/180
-
 # define G_TO_MS2 9.81
 # define MS2_TO_G 1/9.81
 
@@ -63,10 +98,13 @@
 # define GYRO_OFFSET_RY 3 
 # define GYRO_OFFSET_RZ -26
 
-// Mahony Filter
-# define MAHONY_KP 0.02
-# define MAHONY_KI 0.01
-# define MAHONY_WINDUP_THRESHOLD 100
+// Complementary Filter 
+# define GYRO_WEIGHTING 0.99
+# define ACCELEROMETER_WEIGHTING 0.01
+
+# define GYRO_CORRECTION_LIMIT 10
+# define GYRO_OFFSET_WEIGHTING 0.9995
+# define GYRO_OFFSET_CORRECTION_WEIGHTING 0.0005
 
 
 //===========================================================================
@@ -74,13 +112,41 @@
 //===========================================================================
 
 // Control Loop Timing
-# define LOOP_FREQUENCY 100
+# define LOOP_FREQUENCY 100.0
+# define LOOP_PERIOD 1/LOOP_FREQUENCY
 # define WATCHDOG_THRESHOLD 300
 
 // PID Controller
-# define WINDUP_THRESHOLD 100
+// Balance Control
+# define PID_K_RY 35.0
+# define PID_KD_RY 200
+# define PID_KI_RY 0.14
+# define BALANCE_WINDUP_THRESHOLD 6000
 
-# define PID_K_RY 1
-# define PID_KD_RY 100
-# define PID_KI_RY 0
+// Speed Control
+# define PID_K_VX 7.0
+# define PID_KD_VX 0.042
+# define PID_KI_VX 0.0105
+# define SPEED_WINDUP_THRESHOLD 600
+
+// Position Control
+# define PID_K_X 30.0
+# define PID_KD_X 0.0
+# define PID_KI_X 0.0
+# define POSITION_WINDUP_THRESHOLD 300
+
+// Rotation Control
+# define POSITION_VEL_RZ 90
+# define ANGULAR_POSITION_ERROR_THRESHOLD 1
+
+
+//===========================================================================
+//============================= Serial Communication ========================
+//===========================================================================
+
+// Serial frequency
+# define SERIAL_BAUD_RATE 9600
+
+// Json parameters 
+# define JSON_DOCUMENT_SIZE 512
 
