@@ -26,13 +26,17 @@ void IMU::initializeImu()
     this->imu.setZGyroOffset(GYRO_OFFSET_RZ);
 
     // Allow Imu to reach steady state
+    int i{0};
+
     ControlOutput controlOutput = (ControlOutput){0, 0};
 
-    for(int i{0}; i <= IMU_INITIALISATION_ITERATIONS; ++i){
+    while(i <= IMU_INITIALISATION_ITERATIONS){
 
         if (this->readData())
         {
             this->updateState(controlOutput, false);
+
+            i++;
         } 
     }
 }
