@@ -10,7 +10,7 @@ class Controller{
         ControlOutput calculateControlOutput(State& _state, const State& _reference);
         
     private:
-        float dt = 1000/LOOP_FREQUENCY;
+        const float dt{1000/LOOP_FREQUENCY};
 
         float ryPrev;
         float ryErrorInt;
