@@ -1,5 +1,5 @@
 #include "imu.h"
-#include "../config.h"
+#include "config.h"
 #include <I2Cdev.h>
 #include <MPU6050.h>
 

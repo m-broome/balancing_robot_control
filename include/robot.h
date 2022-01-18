@@ -1,11 +1,11 @@
 #ifndef ROBOT_H
 #define ROBOT_H
 
-#include "Drivers/imu.h"
-#include "Drivers/motorController.h"
+#include "imu.h"
+#include "motorController.h"
 #include "Controller.h"
 #include "dataTypes.h"
-#include "Drivers/sleep.h"
+#include "sleep.h"
 #include <TimerOne.h>
 
 
