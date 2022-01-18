@@ -37,7 +37,7 @@ void SerialProxy::executeCommand(Robot& robot)
 
     // parse string to json object 
     StaticJsonDocument<JSON_DOCUMENT_SIZE> doc;
-    
+  
     DeserializationError error = deserializeJson(doc, jsonString);
 
     if (error)

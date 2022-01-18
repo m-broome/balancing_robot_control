@@ -83,6 +83,7 @@ void Commands::setPositionHold(const JsonObject& payload, Robot& robot)
     bool positionHold{payload["state"]};
 
     if (positionHold)
+
     {
         reference.balanceControl = false;
         reference.positionControl = true;

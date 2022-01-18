@@ -44,6 +44,7 @@ ControlOutput Controller::calculateControlOutput(State& state, const State& refe
     float u_rz{abs(rzError) <= ANGULAR_POSITION_ERROR_THRESHOLD ? 0 : rzError > 0 ? -POSITION_VEL_RZ : POSITION_VEL_RZ};
     float u_angular{reference.speedControl ? u_velrz : reference.positionControl ? u_rz : u_velrz};
 
+
     // Superposition of controls
     return (ControlOutput){-(u_linear + u_angular / 2), -(u_linear - u_angular / 2)};
 }
