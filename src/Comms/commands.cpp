@@ -7,7 +7,7 @@
 
 bool Commands::executeCommand(StaticJsonDocument<JSON_DOCUMENT_SIZE> json, Robot& robot)
 {
-    std::string command = json["Command"];
+    std::string command{json["Command"]};
 
     if (command == "SetBalanceAngle")
     {
@@ -66,10 +66,12 @@ bool Commands::executeCommand(StaticJsonDocument<JSON_DOCUMENT_SIZE> json, Robot
 
 void Commands::setMotorEnable(const JsonObject& payload, Robot& robot)
 {
-    if (payload["state"] == true){
+    bool motorEnable{payload["state"]};
+
+    if (motorEnable){
         robot.setSleep(true);
     }
-    else if (payload["state"] == false){
+    else {
         robot.setSleep(false);
     }
 }
@@ -78,8 +80,10 @@ void Commands::setPositionHold(const JsonObject& payload, Robot& robot)
 {
     State reference;
     State state = robot.getState();
+    bool positionHold{payload["state"]};
 
-    if (payload["state"] == true)
+    if (positionHold)
+
     {
         reference.balanceControl = false;
         reference.positionControl = true;

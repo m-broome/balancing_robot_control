@@ -26,7 +26,7 @@ void IMU::initializeImu()
     this->imu.setZGyroOffset(GYRO_OFFSET_RZ);
 
     // Allow Imu to reach steady state
-    int i = 0;
+    int i{0};
 
     ControlOutput controlOutput = (ControlOutput){0, 0};
 
@@ -72,17 +72,17 @@ State& IMU::updateState(const ControlOutput& controlOutput,const bool& motorsDis
 // Based implementation by jjrobots: https://github.com/jjrobots/B-ROBOT_EVO2/blob/master/Arduino/BROBOT_EVO2/MPU6050.ino
 float IMU::complementaryFilter(const ImuData& imuData)
 {
-    float accel_angle = -atan2f((float)imuData.accX, (float)imuData.accZ) * RADS_TO_DEGREES;
+    float accel_angle{-atan2f((float)imuData.accX, (float)imuData.accZ) * RADS_TO_DEGREES};
 
-    float gyro_value = (imuData.gyroY - this->gyro_offset) * GYRO_TO_DEGREES_PER_SECOND;
+    float gyro_value{(imuData.gyroY - this->gyro_offset) * GYRO_TO_DEGREES_PER_SECOND};
 
     // Complementary filter
     // We integrate the gyro rate value to obtain the angle in the short term and we take the accelerometer angle with a low pass filter in the long term...
-    float ry = GYRO_WEIGHTING * (this->state.ry + gyro_value * LOOP_PERIOD) + ACCELEROMETER_WEIGHTING * accel_angle;
+    float ry{GYRO_WEIGHTING * (this->state.ry + gyro_value * LOOP_PERIOD) + ACCELEROMETER_WEIGHTING * accel_angle};
     
     // Gyro bias correction
     // We supose that the long term mean of the gyro_value should tend to zero (gyro_offset). This means that the robot is not continuosly rotating.
-    int16_t correction = constrain(imuData.gyroY, this->gyro_offset - GYRO_CORRECTION_LIMIT, this->gyro_offset + GYRO_CORRECTION_LIMIT); // limit corrections...
+    int16_t correction{constrain(imuData.gyroY, this->gyro_offset - GYRO_CORRECTION_LIMIT, this->gyro_offset + GYRO_CORRECTION_LIMIT)}; // limit corrections...
 
     this->gyro_offset = this->gyro_offset * GYRO_OFFSET_WEIGHTING + correction * GYRO_OFFSET_CORRECTION_WEIGHTING; // Time constant of this correction is around 20 sec.
 

@@ -24,7 +24,7 @@ class IMU
         void printState();
 
     private:
-        float gyro_offset = 0;
+        float gyro_offset{0};
 
         MPU6050 imu;
 
