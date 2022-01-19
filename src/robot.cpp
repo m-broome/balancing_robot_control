@@ -1,8 +1,8 @@
 #include "robot.h"
-#include "Drivers/imu.h"
-#include "Drivers/motorController.h"
-#include "Controller.h"
-#include "Drivers/sleep.h"
+#include "imu.h"
+#include "motorController.h"
+#include "controller.h"
+#include "sleep.h"
 #include <TimerOne.h>
 
 

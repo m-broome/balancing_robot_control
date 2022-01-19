@@ -16,7 +16,7 @@ struct ImuData
 
 struct State
 {
-    // Control type
+    // Control type     
     bool positionControl{true};
     bool speedControl{false};
     bool balanceControl{false};

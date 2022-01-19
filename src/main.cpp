@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include <TimeLib.h>
 
-#include "Comms/serialProxy.h"
+#include "serialProxy.h"
 #include "config.h"
 #include "robot.h"
 
