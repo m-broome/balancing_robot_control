@@ -3,7 +3,7 @@
 
 #include "imu.h"
 #include "motorController.h"
-#include "Controller.h"
+#include "controller.h"
 #include "dataTypes.h"
 #include "sleep.h"
 #include <TimerOne.h>

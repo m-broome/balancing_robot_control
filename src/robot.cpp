@@ -1,7 +1,7 @@
 #include "robot.h"
 #include "imu.h"
 #include "motorController.h"
-#include "Controller.h"
+#include "controller.h"
 #include "sleep.h"
 #include <TimerOne.h>
 

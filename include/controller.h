@@ -21,6 +21,15 @@ class Controller{
         float velXPrev;
         float velXErrorInt;
 
+        float calculatelinearSpeedTerm(float stateVelX, float refVelX);
+
+        float calculatelinearPositionTerm(float stateX, float refX);
+
+        float calculateBalanceTerm(float stateRy, float refRy);
+
+        float calculateAngularSpeedTerm(float stateVelRz, float refVelRz);        
+        
+        float calculateAngularPositionTerm(float stateRz, float refRz);
 };
 
 #endif
